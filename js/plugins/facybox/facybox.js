@@ -106,19 +106,19 @@
    * Public, $.facybox methods
    */
 
-  $.extend($.facybox, {
-    //possible option: noAutoload --- will build facybox only when it is needed
-      settings: {
-        noAutoload: false,
-		opacity      : 0.3,
-		overlay      : true,
-		modal        : false,
-		imageTypes   : [ 'png', 'jpg', 'jpeg', 'gif' ],
-		imageMimeTypes  : [ 'image/jpeg', 'image/png', 'image/gif' ]
-    },
+    $.extend($.facybox, {
+        //possible option: noAutoload --- will build facybox only when it is needed
+        settings: {
+            noAutoload: false,
+            opacity: 0.3,
+            overlay: true,
+            modal: false,
+            imageTypes: ['png', 'jpg', 'jpeg', 'gif'],
+            imageMimeTypes: ['image/jpeg', 'image/png', 'image/gif']
+        },
 
-    html : function(){
-      return '\
+        html: function () {
+            return '\
 		<div id="facybox" style="display:none;"> \
 			<div class="popup"> \
 				<table> \
@@ -145,17 +145,40 @@
 		</div> \
 		<div class="loading"></div> \
 	'
-    },
+        },
 
-    loading: function(){
-      init();
-      if($('.loading',$('#facybox'))[0]) return;//already in loading state...
-      showOverlay();
-      $.facybox.wait();
-      if (!$.facybox.settings.modal) {
-          $.facybox.addESC();
-      }
-      $(document).trigger('loading.facybox');
+        loading: function () {
+            init();
+            if ($('.loading', $('#facybox'))[0]) return;//already in loading state...
+            showOverlay();
+            $.facybox.wait();
+            if (!$.facybox.settings.modal) {
+                $.facybox.addESC();
+            }
+            $(document).trigger('loading.facybox');
+        },
+
+    isMsIE: function () {
+        var isMsIE = false;
+        if (typeof ($.browser) != 'undefined' && typeof ($.browser.msie) != 'undefined') {
+            isMsIE = $.browser.msie;
+        }
+        else {
+            //jQuery 1.9+
+            jQuery.browser = {};
+            (
+                function () {
+                    jQuery.browser.msie = false;
+                    jQuery.browser.version = 0;
+                    if (navigator.userAgent.match(/MSIE ([0-9]+)./)) {
+                        jQuery.browser.msie = true;
+                        jQuery.browser.version = RegExp.$1;
+                    }
+                }
+            )();
+            isMsIE = jQuery.browser.msie;
+        }
+        return isMsIE;
     },
 
     addESC: function () {
@@ -340,7 +363,7 @@
 	var $f = $("#facybox");
 	
 	// it amazes me that this is still better than native png32 support in ie8...
-	if($.browser.msie){
+    if ($.facybox.isMsIE()) {
 		$(".n, .s, .w, .e, .nw, .ne, .sw, .se", $f).fixPNG();
 		// ie6
 		if(parseInt($.browser.version) <= 6){
@@ -524,7 +547,7 @@
 
 	// ie hacks
 	var $f = $("#facybox");
-	if($.browser.msie){
+    if ($.facybox.isMsIE()){
 		$('#facybox').hide();
 		hideOverlay();
 		$('#facybox .loading').remove();

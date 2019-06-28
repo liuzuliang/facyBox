@@ -1,5 +1,5 @@
 ﻿# facyBox
-fork from https://github.com/bitbonsai/facyBox,  Added mandatory modal window mode in the every link
+fork from https://github.com/bitbonsai/facyBox,  Added mandatory modal window mode in the every link. support jQuery v1.x - lastest 3.4.1( now 2019-06-28)
 # Usage
 ## 1. Javascript、Css Reference
 ```html
