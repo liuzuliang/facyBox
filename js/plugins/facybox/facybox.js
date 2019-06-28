@@ -279,7 +279,7 @@
 		var fh = parseInt($f.height());
 
 		if(pos[1] > fh){
-			var t = (pos[3] + (pos[1] - fh)/2);
+            var t = (pos[3] + (pos[1] - fh) / 5); //old: t = (pos[3] + (pos[1] - fh)/5);
 			$f.css({ 'left': wl, 'top': t });
 			// console.log('height smaller then window: '+fh, pos[1], pos[3])
 		} else {
