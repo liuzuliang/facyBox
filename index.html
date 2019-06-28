@@ -8,14 +8,14 @@
     <link href="js/plugins/facybox/facybox_urls.css" rel="stylesheet" />
     <link href="demo/faceplant.css" media="screen" rel="stylesheet" type="text/css" />
     <script src="js/jquery.js" type="text/javascript"></script>
-    <script src="js/plugins/facybox/facybox.js"></script>
+    <script src="js/plugins/facybox/facybox.js?v=13"></script>
 
     <script type="text/javascript">
         jQuery(document).ready(function ($) {
             $('a[rel*=facybox]').facybox({
                 noAutoload: true,
                 modal: false,
-                opacity: 0.3
+                opacity: 0
             });
 
             $("h2", $("#changelog")).css("cursor", "pointer").click(function () {
@@ -23,6 +23,30 @@
             }).trigger("click");
 
         });
+        function closeFacyBox() {
+            $.facybox.close();
+        }
+        function removeDisabledAttr(jObj) {
+            if (typeof (jObj) == 'undefined') {
+                return;
+            }
+            if (typeof (jObj.removeProp) != 'undefined') {
+                jObj.removeProp("disabled");
+            }
+            if (typeof (jObj.removeAttr) != 'undefined') {
+                jObj.removeAttr("disabled");
+            }
+        }
+        function editInFacyBox() {
+            var jUserName = $("#userName");
+            if (jUserName.length == 0) {
+                alert("The element 'userName' of page can not be found.");
+                return;
+            }
+            removeDisabledAttr(jUserName);
+            $.facybox.setToModalByDynamic(true); //
+            
+        }
     </script>
 </head>
 
@@ -164,7 +188,7 @@ jQuery('#open_gallery').click(function(){
                     </p>
                     <p>
                         <a href="http://th01.deviantart.net/fs50/300W/f/2009/257/7/f/Vintage_by_ValentinaKallias.jpg" rel="facybox" forceModal="true">
-                            View image 'Vintage_by_ValentinaKallias.jpg' with force-modal in the facybox
+                            BBB View image 'Vintage_by_ValentinaKallias.jpg' with force-modal in the facybox
                         </a>
                     </p>
                     <p>
@@ -172,6 +196,20 @@ jQuery('#open_gallery').click(function(){
                             View 'remote.html' with modal by programmatic in the facybox
                         </a>
                     </p>
+                    <p>
+                        <a href="javascript: openRemoteModifyUserNameHtml();">
+                            View 'remote_modify_user_name.html' with non-modal,
+                            but dynamically set whether the modal is inside the window by programmatic in the facybox
+                        </a>
+                    </p>
+                    <script type="text/javascript">
+                        function openRemoteHtml() {
+                            jQuery.facybox({ ajax: 'demo/remote.html', forceModal: true }, 'my-groovy-style');
+                        }
+                        function openRemoteModifyUserNameHtml() {
+                            jQuery.facybox({ ajax: 'demo/remote_modify_user_name.html', forceModal: false }, 'my-groovy-style');
+                        }
+                    </script>
 
                     <div class="code">
                         <h3>The Code</h3>

@@ -89,9 +89,12 @@
 	
   //TODO refactor using data.content_klass
   $.facybox = function(data, klass) {
+    $.facybox.setModal(data.forceModal);// Determine if the window is currently open with modal
     $.facybox.loading();
     $.facybox.content_klass = klass;
-    if (data.ajax) revealAjax(data.ajax);
+    if (data.ajax) {
+        revealAjax(data.ajax);
+    }
     else if(data.image) revealImage(data.image);
     else if(data.images) revealGallery(data.images,data.initial);
     else if(data.div) revealHref(data.div);
@@ -163,6 +166,77 @@
 
     removeESC: function () {
         $(document).unbind('keydown.facybox');
+      },
+
+    addClickInOverlay: function () {
+        $('#facybox_overlay').bind('click', function () {
+            $(document).trigger('close.facybox');
+        });
+    },
+
+    removeClickInOverlay: function () {
+        $("#facybox_overlay").unbind('click');
+      },
+
+    /**
+     * dynamically set whether the modal is inside the window by programmatic in the facybox
+     * @param {any} toModal
+     */
+    setToModalByDynamic: function (toModal) {
+        if (typeof (toModal) != 'boolean') {
+            return;
+        }
+        if (toModal) {
+            //to modal
+            $.facybox.removeESC();
+            $.facybox.removeClickInOverlay();
+        }
+        else {
+            $.facybox.addESC();
+            $.facybox.addClickInOverlay();
+        }
+    },
+
+    /**
+     * Determine if the window is currently open with modal
+     * @param {any} forceModal
+     */
+    setModal: function (forceModal) {
+        //alert("forceModal = " + forceModal);
+        if (typeof (forceModal) == 'undefined') {
+            return;
+        }
+        if (typeof (forceModal) == 'boolean') {
+            //
+        }
+        else if (typeof (forceModal) == 'string') {
+            forceModal = forceModal === 'true';
+        }
+        else {
+            //ignore
+            return;
+        }
+        var originalModal = $.facybox.settings.modal;
+        if (originalModal == forceModal) {
+            return;
+        }
+        $.facybox.settings.modal = forceModal;
+        if (forceModal) {
+            $.facybox.removeESC();
+        }
+        else {
+            $.facybox.addESC();
+        }
+        $(document).bind('afterClose.facybox', function () {
+            $.facybox.settings.modal = originalModal;
+            if (originalModal) {
+                $.facybox.removeESC();
+            }
+            else {
+                $.facybox.addESC();
+            }
+            //$(document).unbind('afterClose.facybox'); // ???
+        });
     },
 
     wait: function(){
@@ -231,34 +305,9 @@
     if(!$.facybox.settings.noAutoload) init();
 
     $this.bind('click.facybox',function(){
-        //support force-modal attribute
-        var forceModal = $(this).attr("forceModal");
-        if (typeof (forceModal) != 'undefined') {
-            var forceModal = forceModal === 'true';
-            var originalModal = $.facybox.settings.modal;
-            $.facybox.settings.modal = forceModal;
-            if (originalModal != forceModal)
-            {
-                if (forceModal) {
-                    $.facybox.removeESC();
-                }
-                else {
-                    $.facybox.addESC();
-                }
-            }
-            $(document).bind('afterClose.facybox', function () {
-                $.facybox.settings.modal = originalModal;
-                if (originalModal != forceModal) {
-                    if (originalModal) {
-                        $.facybox.removeESC();
-                    }
-                    else {
-                        $.facybox.addESC();
-                    }
-                }
-                $(document).unbind('afterClose.facybox');
-            });
-        }
+      //support force-modal attribute
+      var forceModal = $(this).attr("forceModal");
+      $.facybox.setModal(forceModal);
       $.facybox.loading();
       // support for rel="facybox.inline_popup" syntax, to add a class
       // also supports deprecated "facybox[.inline_popup]" syntax
@@ -450,8 +499,9 @@
     $('#facybox_overlay').hide().addClass("facybox_overlayBG")
       .css('opacity', $.facybox.settings.opacity)
       .fadeIn(200);
-    if(!$.facybox.settings.modal){
-      $('#facybox_overlay').click(function(){ $(document).trigger('close.facybox')})
+    if (!$.facybox.settings.modal)
+    {
+        $.facybox.addClickInOverlay();
     }
   }
 
