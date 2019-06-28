@@ -1,0 +1,56 @@
+﻿<div>
+    <p>
+        I'm remote.html, a different file loaded with ajax.
+    </p>
+    <p>
+        Please input your name：<input type="text" name="userName" id="userName" value="bruce2" />
+    </p>
+    <p>
+        <table id="tblAppendGrid" style="width:100%;"></table>
+    </p>
+    <p>
+        <input type="button" value="edit" id="btnEdit" onclick="editInFacyBox();" />
+        &nbsp;&nbsp;&nbsp;
+        <input type="button" value="close" id="btnClose" onclick="closeFacyBox();" />
+    </p>
+</div>
+<script type="text/javascript">
+    var tableId = "tblAppendGrid";
+    $(document).ready(function () {
+        var myAppendGrid = new AppendGrid({
+            element: tableId,
+            columns: [
+                { name: "Vendor", display: "Vendor" },
+                {
+                    name: "Status", display: "Status", type: "select", ctrlOptions:
+                        [
+                            "Submitted Offer",
+                            "Declined to Quote",
+                            "No Response"
+                        ]
+                }
+            ]
+        });
+        addDisabledAttr($("#userName"));
+        var jAllFormElements = getJAllFormElements();
+        jAllFormElements.attr("disabled", "disabled");
+        
+    });
+    function getJAllFormElements() {
+        var jAllFormElements = $("#" + tableId + " input").add($("#" + tableId + " button")).add($("#" + tableId + " select"));
+        return jAllFormElements;
+    }
+    function editInFacyBox() {
+        var jUserName = $("#userName");
+        if (jUserName.length == 0) {
+            alert("The element 'userName' of page can not be found.");
+            return;
+        }
+        removeDisabledAttr(jUserName);
+        var jAllFormElements = getJAllFormElements();
+        $.each(jAllFormElements, function (i, item) {
+            removeDisabledAttr($(item));
+        });
+        $.facybox.setToModalByDynamic(true); //
+    }
+</script>
